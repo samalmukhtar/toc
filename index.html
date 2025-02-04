@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: white; /* Ensure the iframe has a white background */
+        }
+
+        
+    </style>
+</head>
+<body>
+    <!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسجيل الصوت وكتابته</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+text-align: center;
+margin-top: 50px;
+}
+#output {
+margin-top: 20px;
+min-height: 50px;
+padding: 10px;
+border: 1px solid #ccc;
+background-color: #f9f9f9;
+}
+button {
+padding: 10px 20px;
+font-size: 16px;
+cursor: pointer;
+}
+</style>
+</head>
+<body>
+<h1>تسجيل الصوت وتحويله إلى نص</h1>
+<button id="startBtn">بدء التسجيل</button>
+<button id="stopBtn" disabled>إيقاف التسجيل</button>
+<div id="output"></div>
+
+<script>
+let recognition;
+const startBtn = document.getElementById('startBtn');
+const stopBtn = document.getElementById('stopBtn');
+const outputDiv = document.getElementById('output');
+
+if ('webkitSpeechRecognition' in window) {
+recognition = new webkitSpeechRecognition();
+recognition.continuous = true;
+recognition.interimResults = true;
+recognition.lang = 'ar-SA';
+
+recognition.onresult = (event) => {
+let interimTranscript = '';
+let finalTranscript = '';
+
+for (let i = event.resultIndex; i < event.results.length; i++) {
+const transcript = event.results[i][0].transcript;
+if (event.results[i].isFinal) {
+finalTranscript += transcript + ' ';
+} else {
+interimTranscript += transcript;
+}
+}
+
+outputDiv.innerHTML = `<strong>النص النهائي:</strong> ${finalTranscript}<br><strong>النص المؤقت:</strong> ${interimTranscript}`;
+};
+
+recognition.onerror = (event) => {
+console.error('حدث خطأ أثناء التسجيل:', event.error);
+outputDiv.innerHTML = 'حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.';
+};
+
+recognition.onend = () => {
+startBtn.disabled = false;
+stopBtn.disabled = true;
+};
+} else {
+outputDiv.innerHTML = 'متصفحك لا يدعم تسجيل الصوت. يرجى استخدام متصفح آخر مثل Google Chrome.';
+}
+
+startBtn.addEventListener('click', () => {
+startBtn.disabled = true;
+stopBtn.disabled = false;
+outputDiv.innerHTML = 'جارٍ التسجيل...';
+recognition.start();
+});
+
+stopBtn.addEventListener('click', () => {
+startBtn.disabled = false;
+stopBtn.disabled = true;
+recognition.stop();
+});
+</script>
+</body>
+</html>
+
+
+
+    <script>
+        
+    </script>
+</body>
+</html>
