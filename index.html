@@ -21,6 +21,8 @@
 <title>تسجيل الصوت وكتابته</title>
 <style>
 body {
+background-color: #000;
+color: #fff;
 font-family: Arial, sans-serif;
 text-align: center;
 margin-top: 50px;
@@ -29,13 +31,32 @@ margin-top: 50px;
 margin-top: 20px;
 min-height: 50px;
 padding: 10px;
-border: 1px solid #ccc;
-background-color: #f9f9f9;
+border: 1px solid #444;
+background-color: #111;
+color: #fff;
 }
 button {
 padding: 10px 20px;
 font-size: 16px;
 cursor: pointer;
+margin: 5px;
+background-color: #333;
+color: #fff;
+border: none;
+border-radius: 5px;
+}
+button:hover {
+background-color: #555;
+}
+a {
+color: #0f0;
+text-decoration: none;
+}
+a:hover {
+text-decoration: underline;
+}
+.icons {
+margin-top: 20px;
 }
 </style>
 </head>
@@ -45,11 +66,20 @@ cursor: pointer;
 <button id="stopBtn" disabled>إيقاف التسجيل</button>
 <div id="output"></div>
 
+<div class="icons">
+<button id="copyBtn">نسخ النص</button>
+<button id="translateBtn">ترجمة النص</button>
+<button id="searchGoogleBtn">بحث في جوجل</button>
+</div>
+
 <script>
 let recognition;
 const startBtn = document.getElementById('startBtn');
 const stopBtn = document.getElementById('stopBtn');
 const outputDiv = document.getElementById('output');
+const copyBtn = document.getElementById('copyBtn');
+const translateBtn = document.getElementById('translateBtn');
+const searchGoogleBtn = document.getElementById('searchGoogleBtn');
 
 if ('webkitSpeechRecognition' in window) {
 recognition = new webkitSpeechRecognition();
@@ -60,7 +90,6 @@ recognition.lang = 'ar-SA';
 recognition.onresult = (event) => {
 let interimTranscript = '';
 let finalTranscript = '';
-
 for (let i = event.resultIndex; i < event.results.length; i++) {
 const transcript = event.results[i][0].transcript;
 if (event.results[i].isFinal) {
@@ -69,7 +98,6 @@ finalTranscript += transcript + ' ';
 interimTranscript += transcript;
 }
 }
-
 outputDiv.innerHTML = `<strong>النص النهائي:</strong> ${finalTranscript}<br><strong>النص المؤقت:</strong> ${interimTranscript}`;
 };
 
@@ -97,6 +125,27 @@ stopBtn.addEventListener('click', () => {
 startBtn.disabled = false;
 stopBtn.disabled = true;
 recognition.stop();
+});
+
+copyBtn.addEventListener('click', () => {
+const textToCopy = outputDiv.innerText;
+navigator.clipboard.writeText(textToCopy).then(() => {
+alert('تم نسخ النص!');
+}).catch(err => {
+console.error('فشل في نسخ النص: ', err);
+});
+});
+
+translateBtn.addEventListener('click', () => {
+const textToTranslate = outputDiv.innerText;
+const encodedText = encodeURIComponent(textToTranslate);
+window.open(`https://translate.google.com/?text=${encodedText}`, '_blank');
+});
+
+searchGoogleBtn.addEventListener('click', () => {
+const textToSearch = outputDiv.innerText;
+const encodedText = encodeURIComponent(textToSearch);
+window.open(`https://www.google.com/search?q=${encodedText}`, '_blank');
 });
 </script>
 </body>
